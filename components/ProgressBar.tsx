@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Colors, BorderRadius } from '../constants/theme';
+import { BorderRadius } from '../constants/theme';
+import { useTheme } from '../context/theme';
 
 interface Props {
     progress: number; // 0 to 1
@@ -8,10 +9,13 @@ interface Props {
     height?: number;
 }
 
-export default function ProgressBar({ progress, color = Colors.primary, height = 6 }: Props) {
+export default function ProgressBar({ progress, color, height = 6 }: Props) {
+    const { colors } = useTheme();
+    const fillColor = color || colors.primary;
+
     return (
-        <View style={[styles.track, { height }]}>
-            <View style={[styles.fill, { width: `${Math.min(progress * 100, 100)}%`, backgroundColor: color, height }]} />
+        <View style={[styles.track, { height, backgroundColor: colors.surfaceLight }]}>
+            <View style={[styles.fill, { width: `${Math.min(progress * 100, 100)}%`, backgroundColor: fillColor, height }]} />
         </View>
     );
 }
@@ -19,7 +23,6 @@ export default function ProgressBar({ progress, color = Colors.primary, height =
 const styles = StyleSheet.create({
     track: {
         width: '100%',
-        backgroundColor: Colors.surfaceLight,
         borderRadius: BorderRadius.full,
         overflow: 'hidden',
     },

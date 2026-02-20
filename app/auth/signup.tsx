@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { supabase } from '../../constants/supabase';
-import { Colors, Spacing, FontSize, BorderRadius } from '../../constants/theme';
+import { Spacing, FontSize, BorderRadius } from '../../constants/theme';
 import { useRouter, Link } from 'expo-router';
+import { useTheme } from '../../context/theme';
 
 export default function SignupScreen() {
     const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export default function SignupScreen() {
     const [fullName, setFullName] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { colors } = useTheme();
 
     async function signUpWithEmail() {
         setLoading(true);
@@ -35,46 +37,46 @@ export default function SignupScreen() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={styles.header}>
                 <Text style={styles.logo}>🎓</Text>
-                <Text style={styles.title}>Create Account</Text>
-                <Text style={styles.subtitle}>Join PrepMaster GH today</Text>
+                <Text style={[styles.title, { color: colors.text }]}>Create Account</Text>
+                <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Join PrepMaster GH today</Text>
             </View>
 
-            <View style={styles.form}>
-                <Text style={styles.label}>Full Name</Text>
+            <View style={[styles.form, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Text style={[styles.label, { color: colors.text }]}>Full Name</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: colors.surfaceLight, borderColor: colors.border, color: colors.text }]}
                     placeholder="Enter your full name"
-                    placeholderTextColor={Colors.textMuted}
+                    placeholderTextColor={colors.textMuted}
                     value={fullName}
                     onChangeText={setFullName}
                 />
 
-                <Text style={styles.label}>Email Address</Text>
+                <Text style={[styles.label, { color: colors.text }]}>Email Address</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: colors.surfaceLight, borderColor: colors.border, color: colors.text }]}
                     placeholder="Enter your email"
-                    placeholderTextColor={Colors.textMuted}
+                    placeholderTextColor={colors.textMuted}
                     value={email}
                     onChangeText={setEmail}
                     autoCapitalize="none"
                     keyboardType="email-address"
                 />
 
-                <Text style={styles.label}>Password</Text>
+                <Text style={[styles.label, { color: colors.text }]}>Password</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: colors.surfaceLight, borderColor: colors.border, color: colors.text }]}
                     placeholder="Create a password"
-                    placeholderTextColor={Colors.textMuted}
+                    placeholderTextColor={colors.textMuted}
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
                 />
 
                 <TouchableOpacity
-                    style={[styles.button, loading && styles.buttonDisabled]}
+                    style={[styles.button, { backgroundColor: colors.primary }, loading && styles.buttonDisabled]}
                     onPress={signUpWithEmail}
                     disabled={loading}
                 >
@@ -86,10 +88,10 @@ export default function SignupScreen() {
                 </TouchableOpacity>
 
                 <View style={styles.footer}>
-                    <Text style={styles.footerText}>Already have an account? </Text>
+                    <Text style={[styles.footerText, { color: colors.textSecondary }]}>Already have an account? </Text>
                     <Link href="/auth/login" asChild>
                         <TouchableOpacity>
-                            <Text style={styles.linkText}>Sign In</Text>
+                            <Text style={[styles.linkText, { color: colors.primary }]}>Sign In</Text>
                         </TouchableOpacity>
                     </Link>
                 </View>
@@ -101,7 +103,6 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
         padding: Spacing.lg,
         justifyContent: 'center',
     },
@@ -116,38 +117,29 @@ const styles = StyleSheet.create({
     title: {
         fontSize: FontSize.xxl,
         fontWeight: '800',
-        color: Colors.text,
     },
     subtitle: {
         fontSize: FontSize.md,
-        color: Colors.textSecondary,
         marginTop: Spacing.xs,
     },
     form: {
-        backgroundColor: Colors.surface,
         padding: Spacing.xl,
         borderRadius: BorderRadius.lg,
         borderWidth: 1,
-        borderColor: Colors.border,
     },
     label: {
-        color: Colors.text,
         fontSize: FontSize.sm,
         fontWeight: '600',
         marginBottom: Spacing.xs,
         marginTop: Spacing.md,
     },
     input: {
-        backgroundColor: Colors.surfaceLight,
         borderRadius: BorderRadius.sm,
         padding: Spacing.md,
-        color: Colors.text,
         fontSize: FontSize.md,
         borderWidth: 1,
-        borderColor: Colors.border,
     },
     button: {
-        backgroundColor: Colors.primary,
         borderRadius: BorderRadius.sm,
         padding: Spacing.md,
         alignItems: 'center',
@@ -167,11 +159,9 @@ const styles = StyleSheet.create({
         marginTop: Spacing.xl,
     },
     footerText: {
-        color: Colors.textSecondary,
         fontSize: FontSize.sm,
     },
     linkText: {
-        color: Colors.primary,
         fontSize: FontSize.sm,
         fontWeight: '700',
     },

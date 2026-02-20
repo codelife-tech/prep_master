@@ -1,4 +1,26 @@
-export const Colors = {
+export const LightColors = {
+  background: '#F8F9FA',
+  surface: '#FFFFFF',
+  surfaceLight: '#E9ECEF',
+  primary: '#00C853',
+  primaryDark: '#009624',
+  accent: '#FFD700',
+  accentDark: '#C7A600',
+  text: '#1A2138',
+  textSecondary: '#4A5568',
+  textMuted: '#718096',
+  success: '#00E676',
+  error: '#FF5252',
+  warning: '#FFD740',
+  border: '#E2E8F0',
+  overlay: 'rgba(0,0,0,0.4)',
+  beceGradientStart: '#1B5E20',
+  beceGradientEnd: '#2E7D32',
+  wassceGradientStart: '#E65100',
+  wassceGradientEnd: '#F57C00',
+};
+
+export const DarkColors = {
   background: '#0F1923',
   surface: '#1A2733',
   surfaceLight: '#243442',
@@ -19,6 +41,8 @@ export const Colors = {
   wassceGradientStart: '#E65100',
   wassceGradientEnd: '#F57C00',
 };
+
+export const Colors = DarkColors; // Default backward compatibility
 
 export const Spacing = {
   xs: 4,

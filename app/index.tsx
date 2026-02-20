@@ -2,15 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Colors, Spacing, FontSize } from '../constants/theme';
+import { Spacing, FontSize } from '../constants/theme';
 import { exams } from '../data';
 import ExamCard from '../components/ExamCard';
 import { useAuth } from '../context/auth';
 import { supabase } from '../constants/supabase';
+import { useTheme } from '../context/theme';
 
 export default function HomeScreen() {
     const router = useRouter();
     const { user } = useAuth();
+    const { colors, theme, toggleTheme } = useTheme();
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -18,40 +20,44 @@ export default function HomeScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar style="light" />
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
                 <View style={styles.topBar}>
-                    <Text style={styles.welcomeText}>Hi, {user?.user_metadata?.full_name || 'Student'}</Text>
-                    <TouchableOpacity onPress={handleLogout}>
-                        <Text style={styles.logoutText}>Logout</Text>
+                    <View>
+                        <Text style={[styles.welcomeText, { color: colors.textSecondary }]}>Hi, {user?.user_metadata?.full_name || 'Student'}</Text>
+                        <TouchableOpacity onPress={handleLogout}>
+                            <Text style={[styles.logoutText, { color: colors.error }]}>Logout</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity style={[styles.themeToggle, { backgroundColor: colors.surfaceLight }]} onPress={toggleTheme}>
+                        <Text style={{ fontSize: 20 }}>{theme === 'light' ? '🌙' : '☀️'}</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.header}>
                     <Text style={styles.logo}>📚</Text>
-                    <Text style={styles.title}>PrepMaster GH</Text>
-                    <Text style={styles.subtitle}>Ace your BECE & WASSCE exams with past questions</Text>
+                    <Text style={[styles.title, { color: colors.text }]}>PrepMaster GH</Text>
+                    <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Ace your BECE & WASSCE exams with past questions</Text>
                 </View>
 
-                <View style={styles.statsRow}>
+                <View style={[styles.statsRow, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                     <View style={styles.stat}>
-                        <Text style={styles.statNumber}>9</Text>
-                        <Text style={styles.statLabel}>Subjects</Text>
+                        <Text style={[styles.statNumber, { color: colors.primary }]}>9</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Subjects</Text>
                     </View>
-                    <View style={styles.statDivider} />
+                    <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                     <View style={styles.stat}>
-                        <Text style={styles.statNumber}>135</Text>
-                        <Text style={styles.statLabel}>Questions</Text>
+                        <Text style={[styles.statNumber, { color: colors.primary }]}>135</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Questions</Text>
                     </View>
-                    <View style={styles.statDivider} />
+                    <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                     <View style={styles.stat}>
-                        <Text style={styles.statNumber}>3</Text>
-                        <Text style={styles.statLabel}>Years</Text>
+                        <Text style={[styles.statNumber, { color: colors.primary }]}>3</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Years</Text>
                     </View>
                 </View>
 
-                <Text style={styles.sectionTitle}>Choose Your Exam</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Choose Your Exam</Text>
 
                 {exams.map((exam, i) => (
                     <ExamCard
@@ -65,7 +71,7 @@ export default function HomeScreen() {
                 ))}
 
                 <View style={styles.footer}>
-                    <Text style={styles.footerText}>🇬🇭 Made for Ghanaian students</Text>
+                    <Text style={[styles.footerText, { color: colors.textMuted }]}>🇬🇭 Made for Ghanaian students</Text>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -73,7 +79,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.background },
+    container: { flex: 1 },
     scroll: { padding: Spacing.lg, paddingTop: Spacing.md },
     topBar: {
         flexDirection: 'row',
@@ -81,28 +87,33 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: Spacing.lg,
     },
-    welcomeText: { color: Colors.textSecondary, fontSize: FontSize.sm, fontWeight: '600' },
-    logoutText: { color: Colors.error, fontSize: FontSize.sm, fontWeight: '700' },
+    welcomeText: { fontSize: FontSize.sm, fontWeight: '600' },
+    logoutText: { fontSize: FontSize.sm, fontWeight: '700' },
+    themeToggle: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     header: { alignItems: 'center', marginBottom: Spacing.xl },
     logo: { fontSize: 56, marginBottom: Spacing.sm },
-    title: { fontSize: FontSize.hero, fontWeight: '900', color: Colors.text, letterSpacing: -1 },
-    subtitle: { fontSize: FontSize.md, color: Colors.textSecondary, textAlign: 'center', marginTop: Spacing.xs },
+    title: { fontSize: FontSize.hero, fontWeight: '900', letterSpacing: -1 },
+    subtitle: { fontSize: FontSize.md, textAlign: 'center', marginTop: Spacing.xs },
     statsRow: {
         flexDirection: 'row',
-        backgroundColor: Colors.surface,
         borderRadius: 16,
         padding: Spacing.lg,
         marginBottom: Spacing.xl,
         justifyContent: 'space-around',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: Colors.border,
     },
     stat: { alignItems: 'center' },
-    statNumber: { fontSize: FontSize.xxl, fontWeight: '800', color: Colors.primary },
-    statLabel: { fontSize: FontSize.xs, color: Colors.textSecondary, marginTop: 2 },
-    statDivider: { width: 1, height: 32, backgroundColor: Colors.border },
-    sectionTitle: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.text, marginBottom: Spacing.md },
+    statNumber: { fontSize: FontSize.xxl, fontWeight: '800' },
+    statLabel: { fontSize: FontSize.xs, marginTop: 2 },
+    statDivider: { width: 1, height: 32 },
+    sectionTitle: { fontSize: FontSize.lg, fontWeight: '700', marginBottom: Spacing.md },
     footer: { alignItems: 'center', paddingVertical: Spacing.xl },
-    footerText: { fontSize: FontSize.sm, color: Colors.textMuted },
+    footerText: { fontSize: FontSize.sm },
 });

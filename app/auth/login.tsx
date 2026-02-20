@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { supabase } from '../../constants/supabase';
-import { Colors, Spacing, FontSize, BorderRadius } from '../../constants/theme';
+import { Spacing, FontSize, BorderRadius } from '../../constants/theme';
 import { useRouter, Link } from 'expo-router';
+import { useTheme } from '../../context/theme';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { colors } = useTheme();
 
     async function signInWithEmail() {
         setLoading(true);
@@ -26,37 +28,37 @@ export default function LoginScreen() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={styles.header}>
                 <Text style={styles.logo}>📚</Text>
-                <Text style={styles.title}>Welcome Back</Text>
-                <Text style={styles.subtitle}>Sign in to continue your progress</Text>
+                <Text style={[styles.title, { color: colors.text }]}>Welcome Back</Text>
+                <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Sign in to continue your progress</Text>
             </View>
 
-            <View style={styles.form}>
-                <Text style={styles.label}>Email Address</Text>
+            <View style={[styles.form, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Text style={[styles.label, { color: colors.text }]}>Email Address</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: colors.surfaceLight, borderColor: colors.border, color: colors.text }]}
                     placeholder="Enter your email"
-                    placeholderTextColor={Colors.textMuted}
+                    placeholderTextColor={colors.textMuted}
                     value={email}
                     onChangeText={setEmail}
                     autoCapitalize="none"
                     keyboardType="email-address"
                 />
 
-                <Text style={styles.label}>Password</Text>
+                <Text style={[styles.label, { color: colors.text }]}>Password</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: colors.surfaceLight, borderColor: colors.border, color: colors.text }]}
                     placeholder="Enter your password"
-                    placeholderTextColor={Colors.textMuted}
+                    placeholderTextColor={colors.textMuted}
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
                 />
 
                 <TouchableOpacity
-                    style={[styles.button, loading && styles.buttonDisabled]}
+                    style={[styles.button, { backgroundColor: colors.primary }, loading && styles.buttonDisabled]}
                     onPress={signInWithEmail}
                     disabled={loading}
                 >
@@ -68,10 +70,10 @@ export default function LoginScreen() {
                 </TouchableOpacity>
 
                 <View style={styles.footer}>
-                    <Text style={styles.footerText}>Don't have an account? </Text>
+                    <Text style={[styles.footerText, { color: colors.textSecondary }]}>Don't have an account? </Text>
                     <Link href="/auth/signup" asChild>
                         <TouchableOpacity>
-                            <Text style={styles.linkText}>Sign Up</Text>
+                            <Text style={[styles.linkText, { color: colors.primary }]}>Sign Up</Text>
                         </TouchableOpacity>
                     </Link>
                 </View>
@@ -83,7 +85,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
         padding: Spacing.lg,
         justifyContent: 'center',
     },
@@ -98,38 +99,29 @@ const styles = StyleSheet.create({
     title: {
         fontSize: FontSize.xxl,
         fontWeight: '800',
-        color: Colors.text,
     },
     subtitle: {
         fontSize: FontSize.md,
-        color: Colors.textSecondary,
         marginTop: Spacing.xs,
     },
     form: {
-        backgroundColor: Colors.surface,
         padding: Spacing.xl,
         borderRadius: BorderRadius.lg,
         borderWidth: 1,
-        borderColor: Colors.border,
     },
     label: {
-        color: Colors.text,
         fontSize: FontSize.sm,
         fontWeight: '600',
         marginBottom: Spacing.xs,
         marginTop: Spacing.md,
     },
     input: {
-        backgroundColor: Colors.surfaceLight,
         borderRadius: BorderRadius.sm,
         padding: Spacing.md,
-        color: Colors.text,
         fontSize: FontSize.md,
         borderWidth: 1,
-        borderColor: Colors.border,
     },
     button: {
-        backgroundColor: Colors.primary,
         borderRadius: BorderRadius.sm,
         padding: Spacing.md,
         alignItems: 'center',
@@ -149,11 +141,9 @@ const styles = StyleSheet.create({
         marginTop: Spacing.xl,
     },
     footerText: {
-        color: Colors.textSecondary,
         fontSize: FontSize.sm,
     },
     linkText: {
-        color: Colors.primary,
         fontSize: FontSize.sm,
         fontWeight: '700',
     },

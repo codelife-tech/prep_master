@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Colors, Spacing, FontSize, BorderRadius, Shadow } from '../constants/theme';
+import { Spacing, FontSize, BorderRadius, Shadow } from '../constants/theme';
 import { getYearData, getSubject } from '../data';
 import QuizOption from '../components/QuizOption';
 import ProgressBar from '../components/ProgressBar';
 import { progressService } from '../services/progress';
+import { useTheme } from '../context/theme';
 
 export default function QuizScreen() {
     const { exam, subject, year } = useLocalSearchParams<{ exam: string; subject: string; year: string }>();
@@ -13,6 +14,7 @@ export default function QuizScreen() {
     const yearNum = parseInt(year || '2022');
     const yearData = getYearData(exam || '', subject || '', yearNum);
     const subjectData = getSubject(exam || '', subject || '');
+    const { colors } = useTheme();
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -79,46 +81,50 @@ export default function QuizScreen() {
     };
 
     if (!yearData || !subjectData) {
-        return <View style={styles.container}><Text style={styles.errorText}>Quiz not available</Text></View>;
+        return <View style={[styles.container, { backgroundColor: colors.background }]}><Text style={[styles.errorText, { color: colors.error }]}>Quiz not available</Text></View>;
     }
 
     if (finished) {
         const pct = Math.round((score / questions.length) * 100);
         const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : pct >= 40 ? '📚' : '💪';
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
                 <ScrollView contentContainerStyle={styles.resultContainer}>
                     <Text style={styles.resultEmoji}>{emoji}</Text>
-                    <Text style={styles.resultTitle}>Quiz Complete!</Text>
-                    <Text style={styles.resultSubject}>{subjectData.name} · {yearNum}</Text>
+                    <Text style={[styles.resultTitle, { color: colors.text }]}>Quiz Complete!</Text>
+                    <Text style={[styles.resultSubject, { color: colors.textSecondary }]}>{subjectData.name} · {yearNum}</Text>
 
-                    <View style={styles.scoreCard}>
-                        <Text style={styles.scoreNumber}>{score}/{questions.length}</Text>
-                        <Text style={styles.scorePercent}>{pct}%</Text>
-                        <ProgressBar progress={pct / 100} height={8} color={pct >= 60 ? Colors.primary : Colors.error} />
+                    <View style={[styles.scoreCard, { backgroundColor: colors.surface }]}>
+                        <Text style={[styles.scoreNumber, { color: colors.text }]}>{score}/{questions.length}</Text>
+                        <Text style={[styles.scorePercent, { color: colors.primary }]}>{pct}%</Text>
+                        <ProgressBar progress={pct / 100} height={8} color={pct >= 60 ? colors.primary : colors.error} />
                     </View>
 
                     <View style={styles.statsRow}>
-                        <View style={styles.statBox}>
-                            <Text style={[styles.statNum, { color: Colors.primary }]}>{score}</Text>
-                            <Text style={styles.statLbl}>Correct</Text>
+                        <View style={[styles.statBox, { backgroundColor: colors.surface }]}>
+                            <Text style={[styles.statNum, { color: colors.primary }]}>{score}</Text>
+                            <Text style={[styles.statLbl, { color: colors.textSecondary }]}>Correct</Text>
                         </View>
-                        <View style={styles.statBox}>
-                            <Text style={[styles.statNum, { color: Colors.error }]}>{questions.length - score}</Text>
-                            <Text style={styles.statLbl}>Wrong</Text>
+                        <View style={[styles.statBox, { backgroundColor: colors.surface }]}>
+                            <Text style={[styles.statNum, { color: colors.error }]}>{questions.length - score}</Text>
+                            <Text style={[styles.statLbl, { color: colors.textSecondary }]}>Wrong</Text>
                         </View>
                     </View>
 
-                    <Text style={styles.reviewTitle}>Review Answers</Text>
+                    <Text style={[styles.reviewTitle, { color: colors.text }]}>Review Answers</Text>
                     {questions.map((q, i) => (
-                        <View key={q.id} style={[styles.reviewItem, answers[i]?.isCorrect ? styles.reviewCorrect : styles.reviewWrong]}>
-                            <Text style={styles.reviewNum}>Q{i + 1}</Text>
-                            <Text style={styles.reviewQuestion} numberOfLines={2}>{q.question}</Text>
-                            <Text style={{ fontSize: 16 }}>{answers[i]?.isCorrect ? '✓' : '✗'}</Text>
+                        <View key={q.id} style={[
+                            styles.reviewItem,
+                            { backgroundColor: colors.surface },
+                            answers[i]?.isCorrect ? { borderLeftColor: colors.primary } : { borderLeftColor: colors.error }
+                        ]}>
+                            <Text style={[styles.reviewNum, { color: colors.textSecondary }]}>Q{i + 1}</Text>
+                            <Text style={[styles.reviewQuestion, { color: colors.text }]} numberOfLines={2}>{q.question}</Text>
+                            <Text style={{ fontSize: 16, color: answers[i]?.isCorrect ? colors.primary : colors.error }}>{answers[i]?.isCorrect ? '✓' : '✗'}</Text>
                         </View>
                     ))}
 
-                    <TouchableOpacity style={styles.doneBtn} onPress={() => router.back()} activeOpacity={0.8}>
+                    <TouchableOpacity style={[styles.doneBtn, { backgroundColor: colors.primary }]} onPress={() => router.back()} activeOpacity={0.8}>
                         <Text style={styles.doneBtnText}>Done</Text>
                     </TouchableOpacity>
                 </ScrollView>
@@ -127,18 +133,20 @@ export default function QuizScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={styles.topBar}>
-                <Text style={styles.qCounter}>Q {currentIndex + 1}/{questions.length}</Text>
-                <View style={[styles.timerBadge, timer <= 10 && { backgroundColor: 'rgba(255,82,82,0.2)' }]}>
-                    <Text style={[styles.timerText, timer <= 10 && { color: Colors.error }]}>⏱ {timer}s</Text>
+                <Text style={[styles.qCounter, { color: colors.text }]}>Q {currentIndex + 1}/{questions.length}</Text>
+                <View style={[styles.timerBadge, { backgroundColor: colors.surface }, timer <= 10 && { backgroundColor: 'rgba(255,82,82,0.15)' }]}>
+                    <Text style={[styles.timerText, { color: colors.accent }, timer <= 10 && { color: colors.error }]}>⏱ {timer}s</Text>
                 </View>
             </View>
 
-            <ProgressBar progress={(currentIndex + 1) / questions.length} />
+            <View style={{ paddingHorizontal: Spacing.lg }}>
+                <ProgressBar progress={(currentIndex + 1) / questions.length} />
+            </View>
 
             <ScrollView contentContainerStyle={styles.qScroll} showsVerticalScrollIndicator={false}>
-                <Text style={styles.questionText}>{currentQ.question}</Text>
+                <Text style={[styles.questionText, { color: colors.text }]}>{currentQ.question}</Text>
 
                 {currentQ.options.map((opt, i) => (
                     <QuizOption
@@ -153,17 +161,17 @@ export default function QuizScreen() {
                 ))}
 
                 {showResult && (
-                    <View style={styles.explanationBox}>
-                        <Text style={styles.expLabel}>💡 Explanation</Text>
-                        <Text style={styles.expText}>{currentQ.explanation}</Text>
+                    <View style={[styles.explanationBox, { borderLeftColor: colors.accent }]}>
+                        <Text style={[styles.expLabel, { color: colors.accent }]}>💡 Explanation</Text>
+                        <Text style={[styles.expText, { color: colors.textSecondary }]}>{currentQ.explanation}</Text>
                     </View>
                 )}
             </ScrollView>
 
-            <View style={styles.bottomBar}>
+            <View style={[styles.bottomBar, { backgroundColor: colors.background }]}>
                 {!showResult ? (
                     <TouchableOpacity
-                        style={[styles.confirmBtn, selectedAnswer === null && styles.btnDisabled]}
+                        style={[styles.confirmBtn, { backgroundColor: colors.primary }, selectedAnswer === null && { backgroundColor: colors.surfaceLight }]}
                         onPress={handleConfirm}
                         disabled={selectedAnswer === null}
                         activeOpacity={0.8}
@@ -171,8 +179,8 @@ export default function QuizScreen() {
                         <Text style={styles.confirmText}>Confirm Answer</Text>
                     </TouchableOpacity>
                 ) : (
-                    <TouchableOpacity style={styles.nextBtn} onPress={handleNext} activeOpacity={0.8}>
-                        <Text style={styles.nextText}>
+                    <TouchableOpacity style={[styles.nextBtn, { backgroundColor: colors.accent }]} onPress={handleNext} activeOpacity={0.8}>
+                        <Text style={[styles.nextText, { color: colors.background }]}>
                             {currentIndex < questions.length - 1 ? 'Next Question →' : 'See Results'}
                         </Text>
                     </TouchableOpacity>
@@ -183,45 +191,42 @@ export default function QuizScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.background },
+    container: { flex: 1 },
     topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: Spacing.md },
-    qCounter: { fontSize: FontSize.md, fontWeight: '700', color: Colors.text },
-    timerBadge: { backgroundColor: Colors.surface, paddingHorizontal: 12, paddingVertical: 6, borderRadius: BorderRadius.full },
-    timerText: { fontSize: FontSize.md, fontWeight: '700', color: Colors.accent },
+    qCounter: { fontSize: FontSize.md, fontWeight: '700' },
+    timerBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: BorderRadius.full },
+    timerText: { fontSize: FontSize.md, fontWeight: '700' },
     qScroll: { padding: Spacing.lg, paddingBottom: 100 },
-    questionText: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.text, lineHeight: 28, marginBottom: Spacing.xl, marginTop: Spacing.md },
+    questionText: { fontSize: FontSize.lg, fontWeight: '700', lineHeight: 28, marginBottom: Spacing.xl, marginTop: Spacing.md },
     explanationBox: {
         marginTop: Spacing.md, backgroundColor: 'rgba(255,215,0,0.08)',
         borderRadius: BorderRadius.sm, padding: Spacing.md,
-        borderLeftWidth: 3, borderLeftColor: Colors.accent,
+        borderLeftWidth: 3,
     },
-    expLabel: { fontSize: FontSize.sm, fontWeight: '700', color: Colors.accent, marginBottom: 4 },
-    expText: { fontSize: FontSize.sm, color: Colors.textSecondary, lineHeight: 20 },
-    bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: Spacing.lg, backgroundColor: Colors.background },
-    confirmBtn: { backgroundColor: Colors.primary, borderRadius: BorderRadius.md, paddingVertical: Spacing.md, alignItems: 'center' },
-    btnDisabled: { backgroundColor: Colors.surfaceLight },
+    expLabel: { fontSize: FontSize.sm, fontWeight: '700', marginBottom: 4 },
+    expText: { fontSize: FontSize.sm, lineHeight: 20 },
+    bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: Spacing.lg },
+    confirmBtn: { borderRadius: BorderRadius.md, paddingVertical: Spacing.md, alignItems: 'center' },
     confirmText: { fontSize: FontSize.lg, fontWeight: '700', color: '#fff' },
-    nextBtn: { backgroundColor: Colors.accent, borderRadius: BorderRadius.md, paddingVertical: Spacing.md, alignItems: 'center' },
-    nextText: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.background },
-    errorText: { color: Colors.error, fontSize: FontSize.md, textAlign: 'center', marginTop: 100 },
+    nextBtn: { borderRadius: BorderRadius.md, paddingVertical: Spacing.md, alignItems: 'center' },
+    nextText: { fontSize: FontSize.lg, fontWeight: '700' },
+    errorText: { fontSize: FontSize.md, textAlign: 'center', marginTop: 100 },
     // Results
     resultContainer: { padding: Spacing.lg, alignItems: 'center', paddingTop: Spacing.xxl },
     resultEmoji: { fontSize: 64, marginBottom: Spacing.md },
-    resultTitle: { fontSize: FontSize.xxl, fontWeight: '900', color: Colors.text },
-    resultSubject: { fontSize: FontSize.sm, color: Colors.textSecondary, marginTop: Spacing.xs, marginBottom: Spacing.xl },
-    scoreCard: { backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, padding: Spacing.xl, width: '100%', alignItems: 'center', ...Shadow.md, marginBottom: Spacing.lg },
-    scoreNumber: { fontSize: 48, fontWeight: '900', color: Colors.text },
-    scorePercent: { fontSize: FontSize.lg, color: Colors.primary, fontWeight: '700', marginBottom: Spacing.md },
+    resultTitle: { fontSize: FontSize.xxl, fontWeight: '900' },
+    resultSubject: { fontSize: FontSize.sm, marginTop: Spacing.xs, marginBottom: Spacing.xl },
+    scoreCard: { borderRadius: BorderRadius.lg, padding: Spacing.xl, width: '100%', alignItems: 'center', ...Shadow.md, marginBottom: Spacing.lg },
+    scoreNumber: { fontSize: 48, fontWeight: '900' },
+    scorePercent: { fontSize: FontSize.lg, fontWeight: '700', marginBottom: Spacing.md },
     statsRow: { flexDirection: 'row', gap: Spacing.md, marginBottom: Spacing.xl },
-    statBox: { flex: 1, backgroundColor: Colors.surface, borderRadius: BorderRadius.md, padding: Spacing.lg, alignItems: 'center', ...Shadow.sm },
+    statBox: { flex: 1, borderRadius: BorderRadius.md, padding: Spacing.lg, alignItems: 'center', ...Shadow.sm },
     statNum: { fontSize: FontSize.xxl, fontWeight: '800' },
-    statLbl: { fontSize: FontSize.xs, color: Colors.textSecondary, marginTop: 4 },
-    reviewTitle: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.text, alignSelf: 'flex-start', marginBottom: Spacing.md },
-    reviewItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: BorderRadius.sm, padding: Spacing.md, marginBottom: Spacing.sm, width: '100%', borderLeftWidth: 3 },
-    reviewCorrect: { borderLeftColor: Colors.primary },
-    reviewWrong: { borderLeftColor: Colors.error },
-    reviewNum: { fontSize: FontSize.sm, fontWeight: '700', color: Colors.textSecondary, marginRight: Spacing.sm, width: 28 },
-    reviewQuestion: { flex: 1, fontSize: FontSize.sm, color: Colors.text },
-    doneBtn: { backgroundColor: Colors.primary, borderRadius: BorderRadius.md, paddingVertical: Spacing.md, paddingHorizontal: Spacing.xxl, marginTop: Spacing.xl },
+    statLbl: { fontSize: FontSize.xs, marginTop: 4 },
+    reviewTitle: { fontSize: FontSize.lg, fontWeight: '700', alignSelf: 'flex-start', marginBottom: Spacing.md },
+    reviewItem: { flexDirection: 'row', alignItems: 'center', borderRadius: BorderRadius.sm, padding: Spacing.md, marginBottom: Spacing.sm, width: '100%', borderLeftWidth: 3 },
+    reviewNum: { fontSize: FontSize.sm, fontWeight: '700', marginRight: Spacing.sm, width: 28 },
+    reviewQuestion: { flex: 1, fontSize: FontSize.sm },
+    doneBtn: { borderRadius: BorderRadius.md, paddingVertical: Spacing.md, paddingHorizontal: Spacing.xxl, marginTop: Spacing.xl },
     doneBtnText: { fontSize: FontSize.lg, fontWeight: '700', color: '#fff' },
 });

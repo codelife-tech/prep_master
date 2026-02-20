@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import { Colors, Spacing, BorderRadius, FontSize, Shadow } from '../constants/theme';
+import { Spacing, BorderRadius, FontSize, Shadow } from '../constants/theme';
 import { Question } from '../types';
+import { useTheme } from '../context/theme';
 
 interface Props {
     question: Question;
@@ -10,76 +11,81 @@ interface Props {
 
 export default function QuestionCard({ question, index }: Props) {
     const [expanded, setExpanded] = useState(false);
+    const { colors } = useTheme();
 
     return (
-        <TouchableOpacity style={styles.card} onPress={() => setExpanded(!expanded)} activeOpacity={0.85}>
+        <TouchableOpacity style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]} onPress={() => setExpanded(!expanded)} activeOpacity={0.85}>
             <View style={styles.header}>
-                <View style={styles.numberBadge}>
+                <View style={[styles.numberBadge, { backgroundColor: colors.primary }]}>
                     <Text style={styles.numberText}>{index + 1}</Text>
                 </View>
-                <Text style={styles.question}>{question.question}</Text>
+                <Text style={[styles.question, { color: colors.text }]}>{question.question}</Text>
             </View>
 
-            {question.options.map((opt, i) => (
-                <View key={i} style={[styles.option, expanded && i === question.correctAnswer && styles.correctOption]}>
-                    <Text style={styles.optionLabel}>{String.fromCharCode(65 + i)}.</Text>
-                    <Text style={[styles.optionText, expanded && i === question.correctAnswer && styles.correctText]}>{opt}</Text>
-                    {expanded && i === question.correctAnswer && <Text style={styles.checkmark}>✓</Text>}
-                </View>
-            ))}
+            {question.options.map((opt, i) => {
+                const isCorrect = expanded && i === question.correctAnswer;
+                return (
+                    <View key={i} style={[
+                        styles.option,
+                        { backgroundColor: colors.surfaceLight },
+                        isCorrect && { backgroundColor: 'rgba(0,200,83,0.15)', borderWidth: 1, borderColor: colors.primary }
+                    ]}>
+                        <Text style={[styles.optionLabel, { color: colors.textSecondary }]}>{String.fromCharCode(65 + i)}.</Text>
+                        <Text style={[
+                            styles.optionText,
+                            { color: colors.text },
+                            isCorrect && { color: colors.primary, fontWeight: '600' }
+                        ]}>{opt}</Text>
+                        {isCorrect && <Text style={[styles.checkmark, { color: colors.primary }]}>✓</Text>}
+                    </View>
+                );
+            })}
 
             {expanded && (
-                <View style={styles.explanationBox}>
-                    <Text style={styles.explanationLabel}>💡 Explanation</Text>
-                    <Text style={styles.explanationText}>{question.explanation}</Text>
+                <View style={[styles.explanationBox, { borderLeftColor: colors.accent }]}>
+                    <Text style={[styles.explanationLabel, { color: colors.accent }]}>💡 Explanation</Text>
+                    <Text style={[styles.explanationText, { color: colors.textSecondary }]}>{question.explanation}</Text>
                 </View>
             )}
 
-            <Text style={styles.tapHint}>{expanded ? 'Tap to collapse' : 'Tap to reveal answer'}</Text>
+            <Text style={[styles.tapHint, { color: colors.textMuted }]}>{expanded ? 'Tap to collapse' : 'Tap to reveal answer'}</Text>
         </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: Colors.surface,
         borderRadius: BorderRadius.lg,
         padding: Spacing.md,
         marginBottom: Spacing.md,
         borderWidth: 1,
-        borderColor: Colors.border,
         ...Shadow.sm,
     },
     header: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: Spacing.md },
     numberBadge: {
         width: 28, height: 28, borderRadius: 14,
-        backgroundColor: Colors.primary,
         justifyContent: 'center', alignItems: 'center',
         marginRight: Spacing.sm,
     },
     numberText: { color: '#fff', fontSize: FontSize.sm, fontWeight: '700' },
-    question: { flex: 1, fontSize: FontSize.md, color: Colors.text, fontWeight: '600', lineHeight: 22 },
+    question: { flex: 1, fontSize: FontSize.md, fontWeight: '600', lineHeight: 22 },
     option: {
         flexDirection: 'row', alignItems: 'center',
-        backgroundColor: Colors.surfaceLight,
         borderRadius: BorderRadius.sm,
         padding: Spacing.sm,
         marginBottom: Spacing.xs,
     },
-    correctOption: { backgroundColor: 'rgba(0,200,83,0.15)', borderWidth: 1, borderColor: Colors.primary },
-    optionLabel: { fontSize: FontSize.sm, color: Colors.textSecondary, fontWeight: '700', marginRight: Spacing.sm, width: 20 },
-    optionText: { flex: 1, fontSize: FontSize.sm, color: Colors.text },
-    correctText: { color: Colors.primary, fontWeight: '600' },
-    checkmark: { fontSize: 16, color: Colors.primary, marginLeft: Spacing.xs },
+    optionLabel: { fontSize: FontSize.sm, fontWeight: '700', marginRight: Spacing.sm, width: 20 },
+    optionText: { flex: 1, fontSize: FontSize.sm },
+    checkmark: { fontSize: 16, marginLeft: Spacing.xs },
     explanationBox: {
         marginTop: Spacing.sm,
         backgroundColor: 'rgba(255,215,0,0.08)',
         borderRadius: BorderRadius.sm,
         padding: Spacing.md,
         borderLeftWidth: 3,
-        borderLeftColor: Colors.accent,
     },
-    explanationLabel: { fontSize: FontSize.sm, fontWeight: '700', color: Colors.accent, marginBottom: 4 },
-    explanationText: { fontSize: FontSize.sm, color: Colors.textSecondary, lineHeight: 20 },
-    tapHint: { textAlign: 'center', fontSize: FontSize.xs, color: Colors.textMuted, marginTop: Spacing.sm },
+    explanationLabel: { fontSize: FontSize.sm, fontWeight: '700', marginBottom: 4 },
+    explanationText: { fontSize: FontSize.sm, lineHeight: 20 },
+    tapHint: { textAlign: 'center', fontSize: FontSize.xs, marginTop: Spacing.sm },
 });
