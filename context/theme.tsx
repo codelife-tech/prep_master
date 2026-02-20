@@ -20,6 +20,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         // Load persisted theme
+        const isServer = typeof window === 'undefined';
+        if (isServer) return;
+
         AsyncStorage.getItem('theme').then((savedTheme) => {
             if (savedTheme === 'light' || savedTheme === 'dark') {
                 setTheme(savedTheme);
@@ -30,7 +33,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
-        AsyncStorage.setItem('theme', newTheme);
+        if (typeof window !== 'undefined') {
+            AsyncStorage.setItem('theme', newTheme);
+        }
     };
 
     const colors = theme === 'light' ? LightColors : DarkColors;
