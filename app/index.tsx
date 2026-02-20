@@ -1,18 +1,33 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Colors, Spacing, FontSize } from '../constants/theme';
 import { exams } from '../data';
 import ExamCard from '../components/ExamCard';
+import { useAuth } from '../context/auth';
+import { supabase } from '../constants/supabase';
 
 export default function HomeScreen() {
     const router = useRouter();
+    const { user } = useAuth();
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        router.replace('/auth/login');
+    };
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="light" />
             <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+                <View style={styles.topBar}>
+                    <Text style={styles.welcomeText}>Hi, {user?.user_metadata?.full_name || 'Student'}</Text>
+                    <TouchableOpacity onPress={handleLogout}>
+                        <Text style={styles.logoutText}>Logout</Text>
+                    </TouchableOpacity>
+                </View>
+
                 <View style={styles.header}>
                     <Text style={styles.logo}>📚</Text>
                     <Text style={styles.title}>PrepMaster GH</Text>
@@ -59,7 +74,15 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: Colors.background },
-    scroll: { padding: Spacing.lg, paddingTop: Spacing.xxl },
+    scroll: { padding: Spacing.lg, paddingTop: Spacing.md },
+    topBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: Spacing.lg,
+    },
+    welcomeText: { color: Colors.textSecondary, fontSize: FontSize.sm, fontWeight: '600' },
+    logoutText: { color: Colors.error, fontSize: FontSize.sm, fontWeight: '700' },
     header: { alignItems: 'center', marginBottom: Spacing.xl },
     logo: { fontSize: 56, marginBottom: Spacing.sm },
     title: { fontSize: FontSize.hero, fontWeight: '900', color: Colors.text, letterSpacing: -1 },

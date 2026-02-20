@@ -5,6 +5,7 @@ import { Colors, Spacing, FontSize, BorderRadius, Shadow } from '../constants/th
 import { getYearData, getSubject } from '../data';
 import QuizOption from '../components/QuizOption';
 import ProgressBar from '../components/ProgressBar';
+import { progressService } from '../services/progress';
 
 export default function QuizScreen() {
     const { exam, subject, year } = useLocalSearchParams<{ exam: string; subject: string; year: string }>();
@@ -68,6 +69,12 @@ export default function QuizScreen() {
             setTimer(30);
         } else {
             setFinished(true);
+            // Save progress to Supabase
+            progressService.saveProgress({
+                exam_type: exam || '',
+                subject_id: subject || '',
+                score: score,
+            }).catch(console.error);
         }
     };
 
