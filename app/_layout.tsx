@@ -1,18 +1,20 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '../context/auth';
 import { ThemeProvider, useTheme } from '../context/theme';
+import SplashScreen from '../components/SplashScreen';
 
 function RootLayoutNav() {
-  const { session, loading } = useAuth();
+  const { session, loading: authLoading } = useAuth();
   const { colors, isDark } = useTheme();
   const segments = useSegments();
   const router = useRouter();
+  const [splashComplete, setSplashComplete] = useState(false);
 
   useEffect(() => {
-    if (loading) return;
+    if (authLoading || !splashComplete) return;
 
     const inAuthGroup = segments[0] === 'auth';
 
@@ -21,11 +23,14 @@ function RootLayoutNav() {
     } else if (session && inAuthGroup) {
       router.replace('/');
     }
-  }, [session, loading, segments]);
+  }, [session, authLoading, segments, splashComplete]);
 
   return (
     <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
+      {!splashComplete && (
+        <SplashScreen onAnimationComplete={() => setSplashComplete(true)} />
+      )}
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.background },
