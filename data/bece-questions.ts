@@ -11,6 +11,16 @@ export const beceSubjects: Subject[] = [
                     { id: 'bm22-3', question: 'Find the area of a rectangle with length 8 cm and width 5 cm.', options: ['13 cm²', '26 cm²', '40 cm²', '80 cm²'], correctAnswer: 2, explanation: 'Area = length × width = 8 × 5 = 40 cm²' },
                     { id: 'bm22-4', question: 'Solve for x: 2x + 5 = 15', options: ['3', '5', '7', '10'], correctAnswer: 1, explanation: '2x + 5 = 15 → 2x = 10 → x = 5' },
                     { id: 'bm22-5', question: 'What is the next number in the sequence: 2, 6, 18, 54, ...?', options: ['72', '108', '162', '216'], correctAnswer: 2, explanation: 'Each number is multiplied by 3. 54 × 3 = 162' },
+                    { id: 'bm22-6', question: 'Convert 450 millimeters to centimeters.', options: ['4.5 cm', '45 cm', '450 cm', '4500 cm'], correctAnswer: 1, explanation: '10 mm = 1 cm. 450 mm / 10 = 45 cm' },
+                    { id: 'bm22-7', question: 'What is the value of 4³?', options: ['12', '16', '64', '256'], correctAnswer: 2, explanation: '4 × 4 × 4 = 16 × 4 = 64' },
+                    { id: 'bm22-8', question: 'In a triangle, if two angles are 45° and 90°, what is the third angle?', options: ['30°', '45°', '60°', '90°'], correctAnswer: 1, explanation: 'Sum of angles = 180°. 180 - (45 + 90) = 45°' },
+                    { id: 'bm22-9', question: 'Find the HCF of 12 and 18.', options: ['2', '3', '6', '12'], correctAnswer: 2, explanation: 'Factors of 12: 1,2,3,4,6,12. Factors of 18: 1,2,3,6,9,18. HCF = 6' },
+                    { id: 'bm22-10', question: 'If 3y = 21, what is the value of y + 5?', options: ['7', '10', '12', '15'], correctAnswer: 2, explanation: '3y = 21 → y = 7. 7 + 5 = 12' },
+                    { id: 'bm22-11', question: 'What is the square root of 225?', options: ['13', '14', '15', '25'], correctAnswer: 2, explanation: '15 × 15 = 225' },
+                    { id: 'bm22-12', question: 'If a car travels 120 km in 2 hours, what is its average speed?', options: ['40 km/h', '60 km/h', '80 km/h', '120 km/h'], correctAnswer: 1, explanation: 'Speed = Distance / Time = 120 / 2 = 60 km/h' },
+                    { id: 'bm22-13', question: 'Which of the following is an irrational number?', options: ['√4', '3.14', 'π', '22/7'], correctAnswer: 2, explanation: 'π is an irrational number; others are rational.' },
+                    { id: 'bm22-14', question: 'A bag contains 4 green balls and 6 yellow balls. What is the probability of picking a yellow ball?', options: ['2/3', '2/5', '3/5', '1/2'], correctAnswer: 2, explanation: 'P(yellow) = 6 / (4 + 6) = 6/10 = 3/5' },
+                    { id: 'bm22-15', question: 'The base of a triangle is 10 cm and the height is 6 cm. Find its area.', options: ['16 cm²', '30 cm²', '60 cm²', '12 cm²'], correctAnswer: 1, explanation: 'Area = 1/2 × base × height = 1/2 × 10 × 6 = 30 cm²' },
                 ]
             },
             {
@@ -75,6 +85,16 @@ export const beceSubjects: Subject[] = [
                     { id: 'bs22-3', question: 'Which organ pumps blood in the human body?', options: ['Liver', 'Kidney', 'Heart', 'Lung'], correctAnswer: 2, explanation: 'The heart pumps blood through the circulatory system.' },
                     { id: 'bs22-4', question: 'What is the chemical formula for water?', options: ['CO₂', 'H₂O', 'NaCl', 'O₂'], correctAnswer: 1, explanation: 'Water consists of 2 hydrogen and 1 oxygen atom: H₂O.' },
                     { id: 'bs22-5', question: 'Which of these is a renewable energy source?', options: ['Coal', 'Natural gas', 'Solar', 'Petroleum'], correctAnswer: 2, explanation: 'Solar energy is renewable — it comes from the sun.' },
+                    { id: 'bs22-6', question: 'Which organ in the human body is responsible for filtering blood?', options: ['Heart', 'Lungs', 'Kidneys', 'Stomach'], correctAnswer: 2, explanation: 'The kidneys filter waste products from the blood to produce urine.' },
+                    { id: 'bs22-7', question: 'What is the state of matter of the air we breathe?', options: ['Solid', 'Liquid', 'Gas', 'Plasma'], correctAnswer: 2, explanation: 'Air is a mixture of gases, primarily nitrogen and oxygen.' },
+                    { id: 'bs22-8', question: 'Which of the following is an example of a physical change?', options: ['Burning wood', 'Iron rusting', 'Melting ice', 'Digesting food'], correctAnswer: 2, explanation: 'Melting ice is a physical change because it remains water; others are chemical.' },
+                    { id: 'bs22-9', question: 'What is the largest planet in our solar system?', options: ['Earth', 'Mars', 'Jupiter', 'Saturn'], correctAnswer: 2, explanation: 'Jupiter is the largest planet in our solar system.' },
+                    { id: 'bs22-10', question: 'Which vitamin is produced when the skin is exposed to sunlight?', options: ['Vitamin A', 'Vitamin B', 'Vitamin C', 'Vitamin D'], correctAnswer: 3, explanation: 'Vitamin D is synthesized by the skin in response to UV radiation.' },
+                    { id: 'bs22-11', question: 'What is the process by which liquid water changes into water vapor?', options: ['Condensation', 'Evaporation', 'Freezing', 'Melting'], correctAnswer: 1, explanation: 'Evaporation is the process of a liquid turning into a gas.' },
+                    { id: 'bs22-12', question: 'Which of these animals is a mammal?', options: ['Snake', 'Frog', 'Eagle', 'Whale'], correctAnswer: 3, explanation: 'Whales are mammals; they breathe air and nurse their young.' },
+                    { id: 'bs22-13', question: 'What is the primary source of energy for the Earth?', options: ['The Moon', 'The Sun', 'Coal', 'Nuclear power'], correctAnswer: 1, explanation: 'The Sun provides the primary energy through light and heat.' },
+                    { id: 'bs22-14', question: 'Which part of the plant is responsible for reproduction?', options: ['Leaf', 'Stem', 'Root', 'Flower'], correctAnswer: 3, explanation: 'Flowers are the reproductive organs of flowering plants.' },
+                    { id: 'bs22-15', question: 'What is the boiling point of pure water at sea level?', options: ['0°C', '50°C', '100°C', '200°C'], correctAnswer: 2, explanation: 'Pure water boils at 100°C at standard atmospheric pressure.' },
                 ]
             },
             {

@@ -42,12 +42,18 @@ export default function HomeScreen() {
 
                 <View style={[styles.statsRow, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                     <View style={styles.stat}>
-                        <Text style={[styles.statNumber, { color: colors.primary }]}>9</Text>
+                        <Text style={[styles.statNumber, { color: colors.primary }]}>
+                            {exams.reduce((acc, exam) => acc + exam.subjects.length, 0)}
+                        </Text>
                         <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Subjects</Text>
                     </View>
                     <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                     <View style={styles.stat}>
-                        <Text style={[styles.statNumber, { color: colors.primary }]}>135</Text>
+                        <Text style={[styles.statNumber, { color: colors.primary }]}>
+                            {exams.reduce((acc, exam) =>
+                                acc + exam.subjects.reduce((sum, sub) =>
+                                    sum + sub.years.reduce((qSum, y) => qSum + y.questions.length, 0), 0), 0)}
+                        </Text>
                         <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Questions</Text>
                     </View>
                     <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
