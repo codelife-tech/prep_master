@@ -8,6 +8,7 @@ import ExamCard from '../components/ExamCard';
 import { useAuth } from '../context/auth';
 import { supabase } from '../constants/supabase';
 import { useTheme } from '../context/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
     const router = useRouter();
@@ -62,6 +63,20 @@ export default function HomeScreen() {
                         <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Years</Text>
                     </View>
                 </View>
+
+                <TouchableOpacity
+                    style={[styles.chatCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
+                    onPress={() => router.push('/chat')}
+                >
+                    <View style={[styles.chatIconContainer, { backgroundColor: colors.primary + '15' }]}>
+                        <Text style={styles.chatIcon}>🤖</Text>
+                    </View>
+                    <View style={styles.chatContent}>
+                        <Text style={[styles.chatTitle, { color: colors.text }]}>AI Study Tutor</Text>
+                        <Text style={[styles.chatSubtitle, { color: colors.textSecondary }]}>Ask questions and get instant help</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+                </TouchableOpacity>
 
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>Choose Your Exam</Text>
 
@@ -120,6 +135,31 @@ const styles = StyleSheet.create({
     statLabel: { fontSize: FontSize.xs, marginTop: 2 },
     statDivider: { width: 1, height: 32 },
     sectionTitle: { fontSize: FontSize.lg, fontWeight: '700', marginBottom: Spacing.md },
+    chatCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: Spacing.lg,
+        borderRadius: 20,
+        marginBottom: Spacing.xl,
+        borderWidth: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
+    },
+    chatIconContainer: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: Spacing.md,
+    },
+    chatIcon: { fontSize: 24 },
+    chatContent: { flex: 1 },
+    chatTitle: { fontSize: FontSize.md, fontWeight: '700' },
+    chatSubtitle: { fontSize: FontSize.xs, marginTop: 2 },
     footer: { alignItems: 'center', paddingVertical: Spacing.xl },
     footerText: { fontSize: FontSize.sm },
 });
