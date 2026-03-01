@@ -1,30 +1,63 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Animated } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Spacing, FontSize, BorderRadius, Shadow } from '../constants/theme';
 import { getSubject } from '../data';
 import { useTheme } from '../context/theme';
+import { questionService } from '../services/questionService';
+import { Subject } from '../types';
 
 export default function YearsScreen() {
     const { exam, subject } = useLocalSearchParams<{ exam: string; subject: string }>();
     const router = useRouter();
-    const subjectData = getSubject(exam || '', subject || '');
     const { colors } = useTheme();
+    const localSubject = getSubject(exam || '', subject || '');
 
-    if (!subjectData) return <View style={[styles.container, { backgroundColor: colors.background }]}><Text style={[styles.errorText, { color: colors.error }]}>Subject not found</Text></View>;
+    const [subjectData, setSubjectData] = useState<Subject | null>(localSubject || null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadSubjectData();
+    }, [exam, subject]);
+
+    const loadSubjectData = async () => {
+        try {
+            const dbSubjects = await questionService.fetchSubjects(exam || '');
+            const found = dbSubjects.find(s => s.id === subject);
+            if (found) {
+                setSubjectData(found);
+            }
+        } catch (err) {
+            console.log('Using local subject data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!subjectData && !loading) {
+        return <View style={[styles.container, { backgroundColor: colors.background }]}><Text style={[styles.errorText, { color: colors.error }]}>Subject not found</Text></View>;
+    }
+
+    if (loading && !subjectData) {
+        return (
+            <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+                <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 100 }} />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>
-                    <Text style={styles.icon}>{subjectData.icon}</Text>
-                    <Text style={[styles.title, { color: colors.text }]}>{subjectData.name}</Text>
+                    <Text style={styles.icon}>{subjectData!.icon}</Text>
+                    <Text style={[styles.title, { color: colors.text }]}>{subjectData!.name}</Text>
                     <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{exam} Past Questions</Text>
                 </View>
 
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>Available Years</Text>
 
-                {subjectData.years.map((yearData, i) => (
+                {subjectData!.years.map((yearData, i) => (
                     <YearItem
                         key={yearData.year}
                         year={yearData.year}

@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { Spacing, FontSize } from '../constants/theme';
 import { exams } from '../data';
 import ExamCard from '../components/ExamCard';
 import { useAuth } from '../context/auth';
 import { supabase } from '../constants/supabase';
 import { useTheme } from '../context/theme';
-
+import { adminService } from '../services/adminService';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
     const router = useRouter();
     const { user } = useAuth();
     const { colors, theme, toggleTheme } = useTheme();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        checkAdmin();
+    }, []);
+
+    const checkAdmin = async () => {
+        const admin = await adminService.isAdmin();
+        setIsAdmin(admin);
+    };
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -30,9 +40,19 @@ export default function HomeScreen() {
                             <Text style={[styles.logoutText, { color: colors.error }]}>Logout</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={[styles.themeToggle, { backgroundColor: colors.surfaceLight }]} onPress={toggleTheme}>
-                        <Text style={{ fontSize: 20 }}>{theme === 'light' ? '🌙' : '☀️'}</Text>
-                    </TouchableOpacity>
+                    <View style={styles.topBarRight}>
+                        {isAdmin && (
+                            <TouchableOpacity
+                                style={[styles.adminBtn, { backgroundColor: colors.accent + '20' }]}
+                                onPress={() => router.push('/admin')}
+                            >
+                                <Ionicons name="settings" size={20} color={colors.accent} />
+                            </TouchableOpacity>
+                        )}
+                        <TouchableOpacity style={[styles.themeToggle, { backgroundColor: colors.surfaceLight }]} onPress={toggleTheme}>
+                            <Text style={{ fontSize: 20 }}>{theme === 'light' ? '🌙' : '☀️'}</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <View style={styles.header}>
@@ -64,7 +84,6 @@ export default function HomeScreen() {
                     </View>
                 </View>
 
-
                 <Text style={[styles.sectionTitle, { color: colors.text }]}>Choose Your Exam</Text>
 
                 {exams.map((exam, i) => (
@@ -95,9 +114,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: Spacing.lg,
     },
+    topBarRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
     welcomeText: { fontSize: FontSize.sm, fontWeight: '600' },
     logoutText: { fontSize: FontSize.sm, fontWeight: '700' },
     themeToggle: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    adminBtn: {
         width: 44,
         height: 44,
         borderRadius: 22,
@@ -122,7 +153,6 @@ const styles = StyleSheet.create({
     statLabel: { fontSize: FontSize.xs, marginTop: 2 },
     statDivider: { width: 1, height: 32 },
     sectionTitle: { fontSize: FontSize.lg, fontWeight: '700', marginBottom: Spacing.md },
-
     footer: { alignItems: 'center', paddingVertical: Spacing.xl },
     footerText: { fontSize: FontSize.sm },
 });

@@ -75,7 +75,10 @@ export default function QuizScreen() {
             progressService.saveProgress({
                 exam_type: exam || '',
                 subject_id: subject || '',
-                score: score,
+                year: yearNum,
+                score: Math.round((score / questions.length) * 100),
+                total_questions: questions.length,
+                correct_answers: score,
             }).catch(console.error);
         }
     };
