@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../constants/supabase';
 import { Spacing, FontSize, BorderRadius } from '../../constants/theme';
 import { useRouter, Link } from 'expo-router';
@@ -8,19 +9,47 @@ import { useTheme } from '../../context/theme';
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { colors } = useTheme();
 
     async function signInWithEmail() {
+        // Validate email
+        if (!email.trim()) {
+            Alert.alert('Email Required', 'Please enter your email address.');
+            return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            Alert.alert('Invalid Email', 'Please enter a valid email address.');
+            return;
+        }
+
+        // Validate password
+        if (!password) {
+            Alert.alert('Password Required', 'Please enter your password.');
+            return;
+        }
+        if (password.length < 6) {
+            Alert.alert('Invalid Password', 'Password must be at least 6 characters long.');
+            return;
+        }
+
         setLoading(true);
         const { error } = await supabase.auth.signInWithPassword({
-            email: email,
+            email: email.trim(),
             password: password,
         });
 
         if (error) {
-            Alert.alert('Error', error.message);
+            if (error.message.toLowerCase().includes('invalid login credentials')) {
+                Alert.alert('Login Failed', 'Incorrect email or password. Please check your credentials and try again.');
+            } else if (error.message.toLowerCase().includes('email not confirmed')) {
+                Alert.alert('Email Not Verified', 'Please check your inbox and confirm your email before signing in.');
+            } else {
+                Alert.alert('Error', error.message);
+            }
         } else {
             router.replace('/');
         }
@@ -48,14 +77,19 @@ export default function LoginScreen() {
                 />
 
                 <Text style={[styles.label, { color: colors.text }]}>Password</Text>
-                <TextInput
-                    style={[styles.input, { backgroundColor: colors.surfaceLight, borderColor: colors.border, color: colors.text }]}
-                    placeholder="Enter your password"
-                    placeholderTextColor={colors.textMuted}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
+                <View style={styles.passwordContainer}>
+                    <TextInput
+                        style={[styles.input, styles.passwordInput, { backgroundColor: colors.surfaceLight, borderColor: colors.border, color: colors.text }]}
+                        placeholder="Enter your password"
+                        placeholderTextColor={colors.textMuted}
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={!showPassword}
+                    />
+                    <TouchableOpacity style={styles.eyeButton} onPress={() => setShowPassword(!showPassword)}>
+                        <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={22} color={colors.textMuted} />
+                    </TouchableOpacity>
+                </View>
 
                 <TouchableOpacity
                     style={[styles.button, { backgroundColor: colors.primary }, loading && styles.buttonDisabled]}
@@ -120,6 +154,19 @@ const styles = StyleSheet.create({
         padding: Spacing.md,
         fontSize: FontSize.md,
         borderWidth: 1,
+    },
+    passwordContainer: {
+        position: 'relative',
+    },
+    passwordInput: {
+        paddingRight: 50,
+    },
+    eyeButton: {
+        position: 'absolute',
+        right: 12,
+        top: 0,
+        bottom: 0,
+        justifyContent: 'center',
     },
     button: {
         borderRadius: BorderRadius.sm,
